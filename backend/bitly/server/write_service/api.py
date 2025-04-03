@@ -3,32 +3,16 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timezone
 import uuid
-import string
 from bitly.db.engine import SessionLocal
 from bitly.db.models import User, Url
 from .models import UrlCreate, UrlResponse
+from bitly.utils.b62 import encode_base62
 
 app = FastAPI(title="Write Microservice", version="1.0.0")
 
 # Global counter for URL generation
 global_counter = 0
 
-# Base62 characters (0-9, a-z, A-Z)
-BASE62 = string.digits + string.ascii_lowercase + string.ascii_uppercase
-
-def encode_base62(num):
-    """Convert number to base62 string."""
-    if num == 0:
-        return BASE62[0]
-    
-    arr = []
-    base = len(BASE62)
-    while num:
-        num, rem = divmod(num, base)
-        arr.append(BASE62[rem])
-    arr.reverse()
-    return ''.join(arr)
-    
 def get_db():
     db = SessionLocal()
     try:
