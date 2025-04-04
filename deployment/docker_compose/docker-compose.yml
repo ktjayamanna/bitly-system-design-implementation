@@ -1,6 +1,23 @@
 version: "3.8"
 
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: bitly_redis
+    ports:
+      - "6379:6379"
+    command: >
+      --maxmemory 100mb 
+      --maxmemory-policy allkeys-lru
+      --maxmemory-samples 5
+    networks:
+      - bitly_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   postgres:
     image: postgres:15
     container_name: bitly_postgres
@@ -53,8 +70,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql://bitly_user:bitly_password@postgres:5432/bitly_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
       PYTHONPATH: /app
     volumes:
       - ../../backend:/app

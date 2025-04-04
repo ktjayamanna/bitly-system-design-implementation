@@ -1,27 +1,29 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import SQLAlchemyError
-from bitly.db.engine import SessionLocal
-from bitly.db.models import Url
+
+from backend.bitly.redis.cache.read_through import ReadThroughCache
+from backend.bitly.redis.helpers.key_builder import KeyBuilder
+from .cache_loader import UrlDataLoader
 
 router = APIRouter()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# Initialize cache with data loader
+url_cache = ReadThroughCache(UrlDataLoader())
 
 @router.get("/{short_code}")
-async def redirect_to_original_url(short_code: str, db: Session = Depends(get_db)):
+async def redirect_to_original_url(short_code: str):
     try:
-        url_entry = db.query(Url).filter(Url.shortened_url == short_code).first()
-        if not url_entry:
+        # Get cache key
+        cache_key = KeyBuilder.build_url_key(short_code)
+        
+        # Try to get URL from cache
+        url_data = url_cache.get(cache_key)
+        
+        if not url_data:
             raise HTTPException(status_code=404, detail="URL not found")
             
-        return RedirectResponse(url=url_entry.original_url, status_code=302)
+        return RedirectResponse(url=url_data["original_url"], status_code=302)
         
     except SQLAlchemyError as e:
         raise HTTPException(status_code=500, detail=str(e))
