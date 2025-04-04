@@ -35,15 +35,38 @@ services:
     volumes:
       - ../../backend:/app
     ports:
-      - "8000:8000"  # Changed from 8001 to 8000 since this is our main service
+      - "8000:8000"
     networks:
       - bitly_network
     command: >
       sh -c "
         cd /app &&
-        sleep 5 &&  # Add a small delay to ensure postgres is ready
+        sleep 5 &&
         alembic upgrade head &&
         uvicorn bitly.server.write_service.api:app --host 0.0.0.0 --port 8000 --reload"
+
+  read_service:
+    build:
+      context: ../../
+      dockerfile: deployment/docker_compose/Dockerfile
+    container_name: bitly_read_service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://bitly_user:bitly_password@postgres:5432/bitly_db
+      PYTHONPATH: /app
+    volumes:
+      - ../../backend:/app
+    ports:
+      - "8001:8001"
+    networks:
+      - bitly_network
+    command: >
+      sh -c "
+        cd /app &&
+        sleep 5 &&
+        uvicorn bitly.server.read_service.api:app --host 0.0.0.0 --port 8001 --reload"
 
 volumes:
   postgres_data:
