@@ -1,7 +1,10 @@
 from redis import Redis, ConnectionPool, RedisError
 from typing import Optional
 import os
-from backend.bitly.redis.constants import REDIS_CONNECTION_ERROR
+from bitly.redis.constants import REDIS_CONNECTION_ERROR
+
+from dotenv import load_dotenv
+load_dotenv(".vscode/.env")
 
 class RedisPool:
     _instance: Optional[ConnectionPool] = None

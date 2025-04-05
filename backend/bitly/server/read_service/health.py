@@ -4,9 +4,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from datetime import datetime, timezone
 from redis.exceptions import RedisError
 
-from backend.bitly.db.engine import SessionLocal
-from backend.bitly.db.models import Url
-from backend.bitly.redis.redis_pool import RedisPool
+from bitly.db.engine import SessionLocal
+from bitly.db.models import Url
+from bitly.redis.redis_pool import RedisPool
 
 router = APIRouter()
 

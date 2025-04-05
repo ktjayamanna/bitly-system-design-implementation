@@ -1,7 +1,7 @@
 from typing import List
 from redis.exceptions import RedisError
-from backend.bitly.redis.redis_pool import RedisPool
-from backend.bitly.redis.constants import REDIS_OPERATION_ERROR
+from bitly.redis.redis_pool import RedisPool
+from bitly.redis.constants import REDIS_OPERATION_ERROR
 
 class CacheInvalidator:
     def __init__(self):

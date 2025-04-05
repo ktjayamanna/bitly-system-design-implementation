@@ -1,10 +1,10 @@
 from typing import Any, Optional
 from redis.exceptions import RedisError
 
-from backend.bitly.redis.redis_pool import RedisPool
-from backend.bitly.redis.helpers.serialization import Serializer
-from backend.bitly.redis.constants import URL_CACHE_TTL, REDIS_OPERATION_ERROR
-from backend.bitly.redis.cache.interface import CacheInterface, DataLoaderInterface
+from bitly.redis.redis_pool import RedisPool
+from bitly.redis.helpers.serialization import Serializer
+from bitly.redis.constants import URL_CACHE_TTL, REDIS_OPERATION_ERROR
+from bitly.redis.cache.interface import CacheInterface, DataLoaderInterface
 
 class ReadThroughCache(CacheInterface):
     def __init__(self, data_loader: DataLoaderInterface):

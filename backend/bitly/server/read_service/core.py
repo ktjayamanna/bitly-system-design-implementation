@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.exc import SQLAlchemyError
 
-from backend.bitly.redis.cache.read_through import ReadThroughCache
-from backend.bitly.redis.helpers.key_builder import KeyBuilder
+from bitly.redis.cache.read_through import ReadThroughCache
+from bitly.redis.helpers.key_builder import KeyBuilder
 from .cache_loader import UrlDataLoader
 
 router = APIRouter()

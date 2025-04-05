@@ -1,8 +1,8 @@
 from typing import Optional, Dict, Any
 from sqlalchemy.orm import Session
-from backend.bitly.redis.cache.interface import DataLoaderInterface
-from backend.bitly.db.models import Url
-from backend.bitly.db.engine import SessionLocal
+from bitly.redis.cache.interface import DataLoaderInterface
+from bitly.db.models import Url
+from bitly.db.engine import SessionLocal
 
 class UrlDataLoader(DataLoaderInterface):
     def load(self, key: str) -> Optional[Dict[str, Any]]:

@@ -1,4 +1,4 @@
-from backend.bitly.redis.constants import URL_CACHE_PREFIX
+from bitly.redis.constants import URL_CACHE_PREFIX
 
 class KeyBuilder:
     @staticmethod
