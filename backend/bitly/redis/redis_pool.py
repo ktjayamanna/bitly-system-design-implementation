@@ -1,9 +1,6 @@
 from redis import Redis, ConnectionPool, RedisError
 from typing import Dict
-import os
-
-from dotenv import load_dotenv
-load_dotenv(".vscode/.env")
+from bitly.configs import app_configs
 
 class RedisPool:
     _pools: Dict[int, ConnectionPool] = {}
@@ -13,8 +10,8 @@ class RedisPool:
         if db_index not in cls._pools:
             try:
                 cls._pools[db_index] = ConnectionPool(
-                    host=os.getenv("REDIS_HOST", "localhost"),
-                    port=int(os.getenv("REDIS_PORT", 6379)),
+                    host=app_configs.REDIS_HOST,
+                    port=app_configs.REDIS_PORT,
                     db=db_index,
                     decode_responses=True
                 )

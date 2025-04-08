@@ -8,7 +8,7 @@
 set -euo pipefail
 
 # Path to .env file
-ENV_FILE="backend/.vscode/.env"
+ENV_FILE=".vscode/.env"
 
 # Allow passing query file as an argument
 QUERY_FILE="${1:-backend/scripts/sql/query_tables.sql}"

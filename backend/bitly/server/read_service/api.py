@@ -3,17 +3,14 @@ from .health import router as health_router
 from .core import router as core_router
 import sentry_sdk
 from sentry_sdk.integrations.fastapi import FastApiIntegration
-from dotenv import load_dotenv
-import os
-
-load_dotenv('backend/.vscode/.env')
+from bitly.configs.app_configs import SENTRY_DSN, SENTRY_TRANSACTION_STYLE
 
 sentry_sdk.init(
-    dsn=os.getenv("SENTRY_DSN"),
+    dsn=SENTRY_DSN,
     send_default_pii=True,
     integrations=[
         FastApiIntegration(
-            transaction_style=os.getenv("SENTRY_TRANSACTION_STYLE", "url"),
+            transaction_style=SENTRY_TRANSACTION_STYLE,
         ),
     ],
 )
