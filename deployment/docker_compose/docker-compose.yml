@@ -1,6 +1,24 @@
 version: "3.8"
 
 services:
+  nginx:
+    image: nginx:alpine
+    container_name: bitly_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - write_service
+      - read_service
+    networks:
+      - bitly_network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   redis:
     image: redis:7-alpine
     container_name: bitly_redis
@@ -54,8 +72,6 @@ services:
       PYTHONPATH: /app
     volumes:
       - ../../backend:/app
-    ports:
-      - "8000:8000"
     networks:
       - bitly_network
     command: >
@@ -83,8 +99,6 @@ services:
       PYTHONPATH: /app
     volumes:
       - ../../backend:/app
-    ports:
-      - "8001:8001"
     networks:
       - bitly_network
     command: >

@@ -46,7 +46,7 @@ async def create_short_url(url_data: UrlCreate, db: Session = Depends(get_db)):
         db.refresh(url_entry)
         
         return UrlResponse(
-            shortened_url=f"http://short.ly/{url_entry.shortened_url}"
+            shortened_url=f"http://localhost/{url_entry.shortened_url}"
         )
         
     except SQLAlchemyError as e:
