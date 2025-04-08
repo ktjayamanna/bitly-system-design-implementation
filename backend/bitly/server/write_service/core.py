@@ -6,11 +6,13 @@ from bitly.db.engine import SessionLocal
 from bitly.db.models import User, Url
 from .models import UrlCreate, UrlResponse
 from bitly.utils.b62 import encode_base62
+from bitly.key_value_store.factory import KeyValueStoreFactory
 
 router = APIRouter()
 
-# Global counter for URL generation
-global_counter = 0
+# Use db 1 for counter (separate from URL cache in db 0)
+counter_store = KeyValueStoreFactory.get_store(db_index=1)
+COUNTER_KEY = "global_url_counter"
 
 def get_db():
     db = SessionLocal()
@@ -21,17 +23,15 @@ def get_db():
 
 @router.post("/urls", response_model=UrlResponse)
 async def create_short_url(url_data: UrlCreate, db: Session = Depends(get_db)):
-    global global_counter
-    
     # Verify user exists
     user = db.query(User).filter(User.user_id == url_data.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
     try:
-        # Increment counter and generate short URL
-        global_counter += 1
-        short_code = encode_base62(global_counter).rjust(6, '0')  # Pad to 6 chars
+        # Use Redis INCR operation to get next counter value
+        counter_value = counter_store.increment(COUNTER_KEY)
+        short_code = encode_base62(counter_value).rjust(6, '0')  # Pad to 6 chars
         
         # Create URL entry
         url_entry = Url(

@@ -46,8 +46,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql://bitly_user:bitly_password@postgres:5432/bitly_db
+      REDIS_HOST: redis
       PYTHONPATH: /app
     volumes:
       - ../../backend:/app
