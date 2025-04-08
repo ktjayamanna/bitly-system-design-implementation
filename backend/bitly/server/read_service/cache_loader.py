@@ -1,7 +1,6 @@
 import logging
 from typing import Optional, Dict, Any
-from sqlalchemy.orm import Session
-from bitly.redis.cache.interface import DataLoaderInterface
+from bitly.key_value_store.interface import DataLoaderInterface
 from bitly.db.models import Url
 from bitly.db.engine import SessionLocal
 

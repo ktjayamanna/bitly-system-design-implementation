@@ -1,28 +1,27 @@
 from redis import Redis, ConnectionPool, RedisError
-from typing import Optional
+from typing import Dict
 import os
-from bitly.redis.constants import REDIS_CONNECTION_ERROR
 
 from dotenv import load_dotenv
 load_dotenv(".vscode/.env")
 
 class RedisPool:
-    _instance: Optional[ConnectionPool] = None
+    _pools: Dict[int, ConnectionPool] = {}
 
     @classmethod
-    def get_pool(cls) -> ConnectionPool:
-        if cls._instance is None:
+    def get_pool(cls, db_index: int = 0) -> ConnectionPool:
+        if db_index not in cls._pools:
             try:
-                cls._instance = ConnectionPool(
+                cls._pools[db_index] = ConnectionPool(
                     host=os.getenv("REDIS_HOST", "localhost"),
                     port=int(os.getenv("REDIS_PORT", 6379)),
-                    db=int(os.getenv("REDIS_DB", 0)),
+                    db=db_index,
                     decode_responses=True
                 )
             except RedisError as e:
-                raise ConnectionError(f"{REDIS_CONNECTION_ERROR}: {str(e)}")
-        return cls._instance
+                raise ConnectionError(f"Failed to establish Redis connection: {str(e)}")
+        return cls._pools[db_index]
 
     @classmethod
-    def get_client(cls) -> Redis:
-        return Redis(connection_pool=cls.get_pool())
+    def get_client(cls, db_index: int = 0) -> Redis:
+        return Redis(connection_pool=cls.get_pool(db_index))
