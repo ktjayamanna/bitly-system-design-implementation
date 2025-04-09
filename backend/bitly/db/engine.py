@@ -1,13 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from bitly.configs.app_configs import DATABASE_URL
+from bitly.configs.constants import DB_POOL_SIZE, DB_MAX_OVERFLOW, DB_POOL_TIMEOUT, DB_POOL_RECYCLE
 
 engine = create_engine(
     DATABASE_URL,
-    pool_size=10,         # Maximum number of connections in the pool
-    max_overflow=5,       # Extra connections beyond pool_size
-    pool_timeout=30,      # Timeout for getting a connection from the pool
-    pool_recycle=1800     # Recycle connections after 30 minutes
+    pool_size=DB_POOL_SIZE,
+    max_overflow=DB_MAX_OVERFLOW,
+    pool_timeout=DB_POOL_TIMEOUT,
+    pool_recycle=DB_POOL_RECYCLE
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

@@ -7,12 +7,12 @@ from bitly.db.models import User, Url
 from .models import UrlCreate, UrlResponse
 from bitly.utils.b62 import encode_base62
 from bitly.key_value_store.factory import KeyValueStoreFactory
+from bitly.configs.constants import COUNTER_KEY
 
 router = APIRouter()
 
 # Use db 1 for counter (separate from URL cache in db 0)
 counter_store = KeyValueStoreFactory.get_store(db_index=1)
-COUNTER_KEY = "global_url_counter"
 
 def get_db():
     db = SessionLocal()
